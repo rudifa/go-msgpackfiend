@@ -1,0 +1,21 @@
+{
+    "address": {
+        "city": "Anytown",
+        "state": "CA",
+        "street": "123 Main St",
+        "zip": "12345"
+    },
+    "age": 30,
+    "email": "johndoe@example.com",
+    "name": "John Doe",
+    "phoneNumbers": [
+        {
+            "number": "555-1234",
+            "type": "home"
+        },
+        {
+            "number": "555-5678",
+            "type": "work"
+        }
+    ]
+}

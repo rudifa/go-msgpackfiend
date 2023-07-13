@@ -1,5 +1,5 @@
-// Package main implements the msgpackfiend command line tool.
-package main
+// Package util implements the hexdump function.
+package util
 
 /*
 Copyright © 2023 Rudolf Farkas @rudifa rudi.farkas@gmail.com
@@ -16,9 +16,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+import "fmt"
 
-import "github.com/rudifa/msgpackfiend/cmd"
+// Hexdump returns a hexdump of the given data
+func Hexdump(data []byte) string {
+	var result string
+	for i := 0; i < len(data); i += 16 {
+		row := data[i:min(i+16, len(data))]
+		hex := ""
+		ascii := ""
+		for j := 0; j < len(row); j++ {
+			hex += fmt.Sprintf("%02x ", row[j])
+			if row[j] >= 32 && row[j] <= 126 {
+				ascii += string(row[j])
+			} else {
+				ascii += "."
+			}
+		}
+		result += fmt.Sprintf("%08x: %-48s %s\n", i, hex, ascii)
+	}
+	return result
+}
 
-func main() {
-	cmd.Execute()
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }

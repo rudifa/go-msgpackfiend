@@ -1,11 +1,27 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
+// Package cmd implements the msgpackfiend command fromjson.
 package cmd
 
-import (
-	"fmt"
+/*
+Copyright © 2023 Rudolf Farkas @rudifa rudi.farkas@gmail.com
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import (
+	"log"
+	"strings"
+
+	"github.com/rudifa/msgpackfiend/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -13,22 +29,27 @@ import (
 var fromjsonCmd = &cobra.Command{
 	Use:   "fromjson",
 	Short: "Convert a json file to msgpack",
-	Long: `Convert a json file to msgpack...`,
+	Long:  `Convert a json file to msgpack...`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("fromjson called")
+
+		infile := cmd.Flag("infile").Value.String()
+		outfile := cmd.Flag("outfile").Value.String()
+
+		// log.Printf("infile: %s", infile)
+		// log.Printf("outfile: %s", outfile)
+
+		if len(args) > 0 {
+			log.Fatal("unexpected arguments: ", strings.Join(args, " "))
+		}
+
+		bytes := util.Read(infile)
+		msgpackbytes := util.JSONToMsgpack(bytes)
+		util.Write(msgpackbytes, outfile)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(fromjsonCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// fromjsonCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// fromjsonCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	fromjsonCmd.Flags().StringP("infile", "i", "", "Input file (default stdin)")
+	fromjsonCmd.Flags().StringP("outfile", "o", "", "Output file (default stdout)")
 }
